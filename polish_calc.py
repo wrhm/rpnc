@@ -1,7 +1,6 @@
 #polish_calc.py
-'''
-Implementation of a reverse Polish calculator.
-'''
+#Author: wrhm
+#Implementation of a reverse Polish calculator.
 
 import string, sys
 
@@ -33,8 +32,12 @@ def rpcVal(expr):
         c = vals[0]
         if isNum(c):
             t = t + [float(c)]
+        elif c=='phi':
+            t = t+[rpcVal('5 1 2 / ^ 1 + 2 /')]
         elif len(t)<2:
-            return 'Not enough values on stack.' #return None
+            #return 'Not enough values on stack.' #return None
+            if c=='fib':
+                t = t[:-2]+[rpcVal('phi %s ^ 0 phi - 0 %s - ^ - 5 1 2 / ^ /'%(t[-1],t[-1]))]
         else:
             if c=='+': #print 'Time to add.'
                 t = t[:-2]+[t[-2]+t[-1]]
@@ -54,7 +57,7 @@ def rpcVal(expr):
     #print 'vals empty.'
     if len(t)==1:
         #return t[0]
-        if t[0]-float(int(t[0]))==0.0: #truncate if whole number
+        if abs(t[0]-float(int(t[0])))<=1e-9: #truncate if (almost) whole number
             return int(t[0])
         else:
             return t[0]
