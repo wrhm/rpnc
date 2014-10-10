@@ -23,6 +23,7 @@ def isNum(s):
     return True
 
 def rpcVal(expr):
+    unary = ['fib']
     vals = expr.split()
     if len(vals)==0: #print 'Invalid input.'
         return 'Need at least one value.'
@@ -30,15 +31,17 @@ def rpcVal(expr):
     while len(vals)>0:
         #print 'vals: %s, t: %s'%(vals,t)
         c = vals[0]
-        if isNum(c):
+        if isNum(c): #number (natural or decimal)
             t = t + [float(c)]
-        elif c=='phi':
+        elif c=='phi': #constant
             t = t+[rpcVal('5 1 2 / ^ 1 + 2 /')]
-        elif len(t)<2:
-            #return 'Not enough values on stack.' #return None
+        elif len(t)==1: #unary operators
             if c=='fib':
                 t = t[:-2]+[rpcVal('phi %s ^ 0 phi - 0 %s - ^ - 5 1 2 / ^ /'%(t[-1],t[-1]))]
-        else:
+            #if c== '!':
+            #    l = 
+            #    t = t[:-2]
+        else: #binary operators
             if c=='+': #print 'Time to add.'
                 t = t[:-2]+[t[-2]+t[-1]]
             elif c=='-': #print 'Time to subtract.'
@@ -52,7 +55,9 @@ def rpcVal(expr):
             elif c=='^':
                 t = t[:-2]+[t[-2]**t[-1]]
             else:
-                return 'Unrecognized symbol: %s.'%c #return None
+                if c in unary:
+                    return '%s needs an argument.'%c
+                #return 'Unrecognized symbol: %s.'%c #return None
         vals = vals[1:]
     #print 'vals empty.'
     if len(t)==1:
@@ -67,7 +72,10 @@ def rpcVal(expr):
 
 if __name__ == "__main__":
     s = ''
-    print '%s\n| RPN Calculator |\n%s\nValid operators: + - * / ^'%('='*18,'='*18)
+    print '%s\n| RPN Calculator |\n%s'%('='*18,'='*18)
+    print 'Valid operators: + - * / ^'
+    print 'Valid values: naturals and decimals, and'
+    print '   Constants: phi'
     #help = 'Enter an expression, \'help\', or \'Exit\''
     #print help
     while True:
