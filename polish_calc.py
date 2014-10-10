@@ -36,7 +36,7 @@ def rpcVal(expr):
         elif c=='phi': #constant
             t = t+[rpcVal('5 1 2 / ^ 1 + 2 /')]
         elif len(t)==1: #unary operators
-            if c=='fib':
+            if c=='fib': # overflows if argument > 1474
                 t = t[:-2]+[rpcVal('phi %s ^ 0 phi - 0 %s - ^ - 5 1 2 / ^ /'%(t[-1],t[-1]))]
             #if c== '!':
             #    l = 
