@@ -57,7 +57,8 @@ def rpcVal(expr):
             else:
                 if c in unary:
                     return '%s needs an argument.'%c
-                #return 'Unrecognized symbol: %s.'%c #return None
+                else:
+                    return 'Unrecognized symbol: %s.'%c #return None
         vals = vals[1:]
     #print 'vals empty.'
     if len(t)==1:
