@@ -23,8 +23,10 @@ def isNum(s):
     return True
 
 def rpcVal(expr,trace):
+    constants = ['pi','phi']
     unary = ['fib']
     binary = ['+','-','*','/','^']
+    ternary = ['quad1']
     tokens = expr.split()
     if len(tokens)==0:
         return 'Need at least one token.'
@@ -34,18 +36,22 @@ def rpcVal(expr,trace):
         c = tokens[0]
         if isNum(c): #number (natural or decimal)
             values.append(float(c))
+        elif c=='e':
+            values.append(rpcVal('1 1 10 11 ^ / + 10 11 ^ ^',trace))
+        elif c=='pi':
+            values.append(rpcVal('245850922 78256779 /',trace))
         elif c=='phi': #constant
-            values = values+[rpcVal('5 1 2 / ^ 1 + 2 /',trace)]
+            values.append(rpcVal('5 1 2 / ^ 1 + 2 /',trace))
         elif len(values)==0: return 'Need at least one value.'
         elif len(values)<=1: #unary operators
             if c=='fib': # overflows if argument > 1474
                 values = values[:-2]+[rpcVal('phi %s ^ 0 phi - 0 %s - ^ - 5 1 2 / ^ /'%(values[-1],values[-1]),trace)]
             else:
-                if c in binary:
-                    return 'Not enough values.'
+                if c in binary+ternary:
+                    return 'Not enough values for %s.'%c
                 else:
-                    return 'Unrecognized symbol: %s.'%c
-        else:#elif len(values)==2: #binary operators
+                    return 'Unrecognized symbol: \'%s\'.'%c
+        else:#elif len(values)==2: #else: #binary operators
             if c=='+': #print 'Time to add.'
                 values = values[:-2]+[values[-2]+values[-1]]
             elif c=='-': #print 'Time to subtract.'
@@ -61,6 +67,10 @@ def rpcVal(expr,trace):
             #else:
             #    if c in unary:
             #        return '%s needs an argument.'%c
+        #else: #ternary operators
+        #    if c=='quad1':
+        #        a,b,c = values[-3],values[-2],values[-1]
+        #        values = values[:-3] + [rpcVal('0 %s - %s 2 ^ 4 %s %s * * - 0.5 ^ - 2 %s * /'%(b,b,a,c,a),trace)]
         tokens = tokens[1:]
     #print 'tokens empty.'
     if trace: print 'tokens: %s, values: %s'%(tokens,values)
@@ -75,14 +85,25 @@ def rpcVal(expr,trace):
         return 'Not enough operators.'
 
 #TESTS
-assert True
-
+#assert (rpcVal('',False) == )
+assert (rpcVal('',False) == 'Need at least one token.')
+assert (rpcVal('3 5 ^ 1 -',False) == 242)
+assert (rpcVal('6 1 / 0 *',False) == 0)
+'''
+assert (rpcVal('',False) == )
+assert (rpcVal('',False) == )
+assert (rpcVal('',False) == )
+assert (rpcVal('',False) == )
+assert (rpcVal('',False) == )
+assert (rpcVal('',False) == )
+assert (rpcVal('',False) == )
+assert (rpcVal('',False) == )'''
 
 if __name__ == "__main__":
     print '%s\n| RPN Calculator |\n%s'%('='*18,'='*18)
     help = ('Valid operators: + - * / ^\n' + 
      'Valid values: naturals and decimals, and\n' +
-     '   Constants: phi\n' +
+     '   Constants: e, pi, phi\n' +
      'Commands: \'trace\', \'exit\', \'help\'')
     print help
     #help = 'Enter an expression, \'help\', or \'Exit\''
@@ -90,11 +111,12 @@ if __name__ == "__main__":
     trace = False
     while True:
         s = raw_input('>> ')
-        if 'exit' in string.lower(s):
+        low = string.lower(s)
+        if 'exit' in low or 'quit' in low:
             sys.exit()
-        if 'help' in string.lower(s):
+        if 'help' in low:
             print help
-        elif 'trace' in string.lower(s):
+        elif 'trace' in low:
             trace = not trace
             print '   [Trace mode now %s.]'%('on' if trace else 'off')
         else:
