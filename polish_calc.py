@@ -52,6 +52,7 @@ def rpcVal(expr,trace):
         return [', '.join(constants),(', '.join(binary))+', '+(', '.join(unary))+', '+(', '.join(ternary))]
     values = []
     while len(tokens)>0:
+        #recognized = False
         if trace:
             print ' - values: %s,\n   tokens: %s'%(values,tokens)
             #print ' - values: %s'%values
@@ -64,17 +65,16 @@ def rpcVal(expr,trace):
             values.append(rpcVal('245850922 78256779 /',trace))
         elif c=='phi': #constant
             values.append(rpcVal('5 1 2 / ^ 1 + 2 /',trace))
-        elif len(values)==0: return 'At least one value is needed for %s.'%c
+        elif len(values)==0: return 'At least one value is needed.'#for %s.'%c
         #elif len(values)>=1: #unary operators
         else:
             if len(values)>=1: #unary operators
                 if c=='fib': # overflows if argument > 1474
                     values = values[:-2]+[rpcVal('phi %s ^ 0 phi - 0 %s - ^ - 5 1 2 / ^ /'%(values[-1],values[-1]),trace)]
-                '''else:
-                    if c in binary+ternary:
-                        return 'Not enough values for %s.'%c
-                    else:
-                        return 'Unrecognized symbol: \'%s\'.'%c '''
+                #elif c in unary:
+                #    return 'Not enough values for %s.'%c
+                #else:
+                #    return 'Unrecognized symbol: %s.'%c
                 if len(values)>=2: #binary operators
                     if c=='+':
                         #print 'Time to add.'
@@ -124,6 +124,12 @@ def rpcVal(expr,trace):
                             result = rpcVal(pattern,trace)
                             if type(result) == str: return result
                             else: values = values[:-3]+[result]
+        '''
+        if c in binary+ternary:
+            return 'Not enough values for %s.'%c
+        else:
+            return 'Unrecognized symbol: \'%s\'.'%c
+        '''
         tokens = tokens[1:]
     #print 'tokens empty.'
     
