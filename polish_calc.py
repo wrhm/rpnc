@@ -42,7 +42,7 @@ def isWhole(num):
 
 def rpcVal(expr,trace):
     constants = ['e','pi','phi']
-    unary = ['fib']
+    unary = ['fact',]#'fib']
     binary = ['+','-','*','/','^']
     ternary = ['quad1', 'quad2', 'hyp','amean','gmean']
     tokens = expr.split()
@@ -69,6 +69,15 @@ def rpcVal(expr,trace):
         #elif len(values)>=1: #unary operators
         else:
             if len(values)>=1: #unary operators
+                '''if c=='fact':
+                    v = values[-1]
+                    if v < 0:
+                        values = values[:-2]+[0]
+                    elif v == 0:
+                        values = values[:-2]+[1]
+                    else:
+                        values = values[:-2]+[rpcVal('%s %s 1 - fact *'%(v,v),trace)]
+           el'''
                 if c=='fib': # overflows if argument > 1474
                     values = values[:-2]+[rpcVal('phi %s ^ 0 phi - 0 %s - ^ - 5 1 2 / ^ /'%(values[-1],values[-1]),trace)]
                 #elif c in unary:
